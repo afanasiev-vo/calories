@@ -1,0 +1,67 @@
+// Fonts
+@import url('https://fonts.googleapis.com/css?family=Nunito');
+// Variables
+@import 'variables';
+// Bootstrap
+@import '~bootstrap/scss/bootstrap';
+
+.navbar-laravel {
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+.dashboard {
+  .settings {
+    .tabs {
+      border-top: 1px solid;
+      border-left: 1px solid;
+      border-right: 1px solid;
+      div.item {
+        cursor: pointer;
+        display: inline-block;
+        border-bottom: 1px dashed;
+        font-size: 12px;
+        background-color: darkgrey;
+        border-bottom: 1px solid;
+        border-left: 1px solid;
+        &:first-child {
+          border-left: none;
+        }
+        &.active {
+          background-color: #fff;
+          border-bottom: none;
+        }
+      }
+    }
+    .tab-content {
+      border-bottom: 1px solid;
+      border-left: 1px solid;
+      border-right: 1px solid;
+      div.item {
+      }
+    }
+  }
+  .upload-btn-wrapper {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+  }
+
+  .btn {
+    border: 2px solid gray;
+    color: gray;
+    background-color: white;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  .upload-btn-wrapper input[type=file] {
+    font-size: 100px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+  }
+}
