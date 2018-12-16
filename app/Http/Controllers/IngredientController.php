@@ -11,7 +11,7 @@ class IngredientController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth');
+//        $this->middleware('auth');
     }
     /**
      * Display a listing of the resource.
@@ -20,7 +20,9 @@ class IngredientController extends Controller
      */
     public function index()
     {
-        return response()->json(['data'=>'data']);
+//        Article::with('category')->get()->all()
+        $ingredients = Ingredient::with('calories')->with('products')->get()->all();
+        return response()->json(['data'=>$ingredients]);
     }
 
     /**
@@ -42,18 +44,19 @@ class IngredientController extends Controller
     public function store(Request $request)
     {
         $calories = new Calories();
-        $calories->calories = 10;
-        $calories->proteins = 21.5;
-        $calories->fats = 12.502;
-        $calories->carbohydrates = 0.53;
-        $calories->gi = 30;
+        $calories->calories = $request->post('calories');
+        $calories->proteins = $request->post('proteins');
+        $calories->fats = $request->post('fats');
+        $calories->carbohydrates = $request->post('carbohydrates');
+        $calories->gi = $request->post('gi');
         $calories->save();
 
         $ingredient = new Ingredient();
         $ingredient->name = $request->post('name');
         $ingredient->thumbnail = $request->post('thumbnail');
         $ingredient->description = $request->post('description');
-        $ingredient->status = $request->post('status');
+        $ingredient->state = $request->post('state');
+        $ingredient->status = Ingredient::ACTIVE;
 
         $user = User::find($request->user()->id);
         $ingredient->owner()->associate($user);

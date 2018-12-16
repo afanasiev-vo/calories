@@ -2,7 +2,7 @@
     <div class="dashboard row">
         <summary-component class="col-lg-3"></summary-component>
         <settings-component class="col-lg-9"></settings-component>
-        dashboard
+        <notifications group="dashboard" />
     </div>
 </template>
 
@@ -15,7 +15,7 @@
             'settings-component': Settings
         },
         mounted() {
-            console.log('Component mounted.')
+            console.log('Component dashboard mounted.')
         }
     }
 </script>

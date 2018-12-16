@@ -22,3 +22,5 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/ingredient', 'IngredientController@index');
 Route::post('/ingredient', 'IngredientController@store');
 Route::post('/file-upload', 'FileController@upload');
+
+Route::get('/products', 'ProductController@index');
