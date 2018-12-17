@@ -8,11 +8,8 @@ class Ingredient extends Model
 {
     const ACTIVE = 'ACTIVE';
     const HOLD = 'HOLD';
+    const PER_PAGE = 15;
 
-    public function calories()
-    {
-        return $this->belongsTo('App\Calories');
-    }
 
     public function owner() {
         return $this->belongsTo('App\User');
