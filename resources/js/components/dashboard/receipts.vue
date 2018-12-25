@@ -89,8 +89,14 @@
             }
         },
         methods: {
-            saveReceipt () {
+            async saveReceipt () {
                 console.log('saveReceipt', { receipt: this.receipt })
+                try {
+                    const result = await axios.post('/products', { ...this.receipt })
+                    console.log(result)
+                } catch (e) {
+                console.error(e)
+                }
             },
             onCreateFormClose () {
                 this.setDefaultFormField()

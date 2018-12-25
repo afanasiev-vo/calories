@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Ingredient;
 use App\Product;
+use App\ProductIngredients;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
@@ -16,18 +19,16 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-        $rules = [
-            'name' => 'required|max:255',
-            'description' => 'required|max:1024',
-            'status' => 'in:ACTIVE,DELETED',
-            'thumbnail' => 'max:524'
-        ];
 
-        $validator = $request->validate($rules);
-
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator], 422);
-        }
+//        $rules = [
+//            'name' => 'required|max:255',
+//            'description' => 'required|max:1024',
+//            'status' => 'in:ACTIVE,DELETED',
+//            'thumbnail' => 'max:524'
+//        ];
+//
+//        $validator = $request->validate($rules);
+//        Log::debug('validator', ['validator' => $validator]);
 
         $product = new Product();
         $product->name = $request->post('name');
@@ -40,7 +41,18 @@ class ProductController extends Controller
         $product->owner()->associate($user);
 
         $savedProduct = $product->save();
+        foreach ($request->post('ingredients') as $ingredient) {
+//            $ingredientModel = new ProductIngredients();
+//            $ingredientModel->product_id = $savedProduct['id'];
+//            $ingredientModel->ingredient_id = $ingredient['data']['id'];
+//            $ingredientModel->weight = $ingredient['weight'];
+//            $ingredientModel->save();
+//            $i = new Ingredient($ingredient['data']);
+            $i = Ingredient::find($ingredient['data']['id'])->first();
+            $product->ingredients()->attach($i, ['weight' => $ingredient['weight']]);
+        }
 
+//        return response()->json(['ok' => 'ok']);
         return response()->json($savedProduct);
 
     }

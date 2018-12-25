@@ -10,6 +10,7 @@ class Ingredient extends Model
     const HOLD = 'HOLD';
     const PER_PAGE = 15;
 
+    protected $fillable = ['id'];
 
     public function owner() {
         return $this->belongsTo('App\User');
