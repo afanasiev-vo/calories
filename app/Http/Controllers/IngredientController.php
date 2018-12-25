@@ -37,6 +37,7 @@ class IngredientController extends Controller
      */
     public function store(Request $request)
     {
+
         $ingredient = new Ingredient();
         $ingredient->name = $request->post('name');
         $ingredient->thumbnail = $request->post('thumbnail');
