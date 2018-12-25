@@ -24,3 +24,4 @@ Route::post('/ingredient', 'IngredientController@store');
 Route::post('/file-upload', 'FileController@upload');
 
 Route::get('/products', 'ProductController@index');
+Route::post('/products', 'ProductController@store');

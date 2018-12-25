@@ -33,11 +33,11 @@
             </tr>
             <tr v-for="ingredient in ingredients">
                 <td>{{ ingredient.name }}</td>
-                <td>{{ ingredient.calories.calories }}</td>
-                <td>{{ ingredient.calories.proteins }}</td>
-                <td>{{ ingredient.calories.fats }}</td>
-                <td>{{ ingredient.calories.carbohydrates }}</td>
-                <td><img :src="ingredient.thumbnail"></img></td>
+                <td>{{ ingredient.calories }}</td>
+                <td>{{ ingredient.proteins }}</td>
+                <td>{{ ingredient.fats }}</td>
+                <td>{{ ingredient.carbohydrates }}</td>
+                <td><img :alt="ingredient.name" :src="ingredient.thumbnail" /></td>
             </tr>
         </table>
     </div>

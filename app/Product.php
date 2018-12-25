@@ -8,6 +8,7 @@ class Product extends Model
 {
     const ACTIVE = 'ACTIVE';
     const DELETED = 'DELETED';
+//    public $timestamps = false;
 
     public function ingredients()
     {
