@@ -21,15 +21,24 @@
             <number-input :label="'Гликемический индекс'" v-model="gi"></number-input>
             <input type="button" value="save" @click="save">
         </div>
-        ingredientList
-        <table>
+        ingredientList (Найдено {{ total }} ингредиентов)
+        <div>
+            <button @click="getIngredients(first_page_url)"> <<< в начало </button>
+            <button @click="getIngredients(prev_page_url)"> << prev </button>
+            current page: {{ current_page }}
+            <button @click="getIngredients(next_page_url)"> next >> </button>
+            <button @click="getIngredients(last_page_url)"> в конец >>> </button>
+        </div>
+
+        <table id="ingredients">
             <tr>
-                <td>name</td>
-                <td>calories</td>
-                <td>proteins</td>
-                <td>fats</td>
-                <td>carbohydrates</td>
-                <td>thumbnail</td>
+                <th>name</th>
+                <th>calories</th>
+                <th>proteins</th>
+                <th>fats</th>
+                <th>carbohydrates</th>
+                <th>thumbnail</th>
+                <th></th>
             </tr>
             <tr v-for="ingredient in ingredients">
                 <td>{{ ingredient.name }}</td>
@@ -37,7 +46,8 @@
                 <td>{{ ingredient.proteins }}</td>
                 <td>{{ ingredient.fats }}</td>
                 <td>{{ ingredient.carbohydrates }}</td>
-                <td><img :alt="ingredient.name" :src="ingredient.thumbnail" /></td>
+                <td><img :alt="ingredient.name" :src="ingredient.thumbnail"/></td>
+                <td><button @click='remove(ingredient.id)'>Delete</button></td>
             </tr>
         </table>
     </div>
@@ -49,6 +59,7 @@
     import NumberInput from '../formComponents/NumberInput'
     import DropDown from '../formComponents/DropDown'
     import ImageUpload from '../formComponents/ImageUpload'
+
     export default {
         name: "ingredients",
         components: {
@@ -72,15 +83,27 @@
                 fats: 0,
                 carbohydrates: 0,
                 gi: 0,
-                test: ''
+                test: '',
+                next_page_url: null,
+                prev_page_url: null,
+                total: 0,
+                first_page_url: null,
+                last_page_url: null,
+                current_page: 1
             }
         },
         methods: {
-            async getIngredients() {
-                const result = await axios.get('/ingredient')
+            async getIngredients(url) {
+                const result = await axios.get( url ? url: '/ingredient')
                 this.ingredients = result.data.data
+                this.next_page_url = result.data.next_page_url
+                this.prev_page_url = result.data.next_page_url
+                this.first_page_url = result.data.first_page_url
+                this.last_page_url = result.data.last_page_url
+                this.current_page = result.data.current_page
+                this.total = result.data.total
             },
-            onUpload (path) {
+            onUpload(path) {
                 this.uploaded_thumbnail_url = path
             },
             async save() {
@@ -105,6 +128,7 @@
                     });
                     this.showCreateForm = false;
                     this.getIngredients();
+                    this.clearForm()
                 } catch (e) {
                     this.$notify({
                         group: 'dashboard',
@@ -114,6 +138,37 @@
                     });
                     console.error(e.message || e)
                 }
+            },
+            async remove (id) {
+                try {
+                    await axios.delete(`/ingredient/${id}`);
+
+                    this.$notify({
+                        group: 'dashboard',
+                        title: 'Ingredient removed!',
+                        text: `Your ingredient ${id} was removed`
+                    });
+                    this.getIngredients();
+                } catch (error) {
+                    this.$notify({
+                        group: 'dashboard',
+                        type: 'error',
+                        title: 'Error',
+                        text: 'Your ingredient was not saved!'
+                    });
+                    console.error(e.message || e)
+                }
+            },
+            clearForm() {
+                this.ingredient_name = ''
+                this.uploaded_thumbnail_url = ''
+                this.ingredient_description = ''
+                this.ingredient_status = 'ACTIVE'
+                this.calories = ''
+                this.proteins = ''
+                this.fats = ''
+                this.carbohydrates = ''
+                this.gi = ''
             }
         },
         mounted() {
@@ -124,5 +179,31 @@
 </script>
 
 <style scoped>
+    #ingredients {
+        font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    #ingredients td, #ingredients th {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+
+    #ingredients tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    #ingredients tr:hover {
+        background-color: #ddd;
+    }
+
+    #ingredients th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: left;
+        background-color: #4CAF50;
+        color: white;
+    }
 
 </style>

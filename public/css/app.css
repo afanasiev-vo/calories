@@ -10472,6 +10472,10 @@ a.text-dark:focus {
           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
 }
 
+img {
+  max-width: 100%;
+}
+
 .dashboard .settings .tabs {
   border-top: 1px solid;
   border-left: 1px solid;

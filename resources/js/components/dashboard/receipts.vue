@@ -49,6 +49,32 @@
                 </div>
             </template>
         </modal-base>
+
+        <div class="product-list">
+            <table id="ingredients">
+                <tr>
+                    <th>Name</th>
+                    <th>Ingredients</th>
+                    <th>calories</th>
+                    <th>proteins</th>
+                    <th>carbohydrates</th>
+                    <th>fats</th>
+                    <th>gi</th>
+                </tr>
+                <tr v-for="product in receiptsList.data">
+                    <td>{{ product.name}}</td>
+                    <td>
+                        <ul>
+                            <li v-for="ingredient in product.ingredients">{{ ingredient.name }}</li>
+                        </ul></td>
+                    <td>{{ product.calories }}</td>
+                    <td>{{ product.proteins }}</td>
+                    <td>{{ product.carbohydrates }}</td>
+                    <td>{{ product.fats }}</td>
+                    <td>{{ product.gi }}</td>
+                </tr>
+            </table>
+        </div>
     </div>
 </template>
 
@@ -85,6 +111,12 @@
                     carbohydrates: 0,
                     proteins: 0,
                     gi: 0
+                },
+                receiptsList: {
+                    currentPage: 1,
+                    data: {},
+                    prevPage: '',
+                    nextPage: ''
                 }
             }
         },
@@ -92,7 +124,7 @@
             async saveReceipt () {
                 console.log('saveReceipt', { receipt: this.receipt })
                 try {
-                    const result = await axios.post('/products', { ...this.receipt })
+                    const result = await axios.post('/products', { ...this.receipt, total: this.total })
                     console.log(result)
                 } catch (e) {
                 console.error(e)
@@ -139,14 +171,50 @@
             async getIngredients () {
                 const result = await axios.get('/ingredient')
                 this.ingredientsList = result.data.data
+            },
+            async getReceipts () {
+                try {
+                    const receipts = await axios.get('/products');
+                    console.log(receipts.data)
+                    this.receiptsList = receipts.data.data
+                } catch (error) {
+                    this.$notify({
+                        group: 'dashboard',
+                        type: 'error',
+                        title: 'Error',
+                        text: 'Не удалось получить список продуктов. попробуйте позже'
+                    });
+                }
             }
         },
         mounted () {
             this.getIngredients()
+            this.getReceipts()
         }
     }
 </script>
 
-<style scoped>
+<style>
+    #ingredients {
+        font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
 
+    #ingredients td, #ingredients th {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+
+    #ingredients tr:nth-child(even){background-color: #f2f2f2;}
+
+    #ingredients tr:hover {background-color: #ddd;}
+
+    #ingredients th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: left;
+        background-color: #4CAF50;
+        color: white;
+    }
 </style>

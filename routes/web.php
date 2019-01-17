@@ -19,9 +19,15 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
+
 Route::get('/ingredient', 'IngredientController@index');
 Route::post('/ingredient', 'IngredientController@store');
+Route::delete('/ingredient/{id}', 'IngredientController@destroy');
+
 Route::post('/file-upload', 'FileController@upload');
 
+Route::get('/receipts', 'ProductController@page');
 Route::get('/products', 'ProductController@index');
 Route::post('/products', 'ProductController@store');
+
+Route::get('/eats', 'EatController@index');
