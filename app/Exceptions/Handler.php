@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Support\Facades\Log;
 
 class Handler extends ExceptionHandler
 {
@@ -46,6 +47,28 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        if($request->wantsJson()) {
+            $response = [
+                'errors' => 'Sorry, something went wrong.'
+            ];
+
+            if (config('app.debug'))
+            {
+                $response['exception'] = get_class($exception);
+                $response['message'] = $exception->getMessage();
+                $response['trace'] = $exception->getTrace();
+            }
+
+            $status = 400;
+
+            if ($this->isHttpException($exception))
+            {
+//                $status = $exception->getCode();
+                $status = 500;
+            }
+
+            return response()->json($response, $status);
+        }
         return parent::render($request, $exception);
     }
 }

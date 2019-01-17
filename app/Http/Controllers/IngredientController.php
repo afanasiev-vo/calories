@@ -6,6 +6,7 @@ use App\Calories;
 use App\Ingredient;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class IngredientController extends Controller
 {
@@ -13,43 +14,31 @@ class IngredientController extends Controller
     {
 //        $this->middleware('auth');
     }
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-//        Article::with('category')->get()->all()
-        $ingredients = Ingredient::with('calories')->with('products')->get()->all();
-        return response()->json(['data'=>$ingredients]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        Log::debug('Ingredient@index');
+        // $ingredients = Ingredient::with('products')->paginate(Ingredient::PER_PAGE);
+        $system = User::where('name', 'SYSTEM')->first();
+        $ingredients = Ingredient::whereIn('owner_id', [$system->id, $request->user()->id])
+            ->orderBy('name', 'asc')
+            ->paginate(Ingredient::PER_PAGE);
+        return response()->json($ingredients);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        $calories = new Calories();
-        $calories->calories = $request->post('calories');
-        $calories->proteins = $request->post('proteins');
-        $calories->fats = $request->post('fats');
-        $calories->carbohydrates = $request->post('carbohydrates');
-        $calories->gi = $request->post('gi');
-        $calories->save();
 
         $ingredient = new Ingredient();
         $ingredient->name = $request->post('name');
@@ -57,22 +46,24 @@ class IngredientController extends Controller
         $ingredient->description = $request->post('description');
         $ingredient->state = $request->post('state');
         $ingredient->status = Ingredient::ACTIVE;
+        $ingredient->calories = $request->post('calories');
+        $ingredient->proteins = $request->post('proteins');
+        $ingredient->fats = $request->post('fats');
+        $ingredient->carbohydrates = $request->post('carbohydrates');
+        $ingredient->gi = $request->post('gi');
 
         $user = User::find($request->user()->id);
         $ingredient->owner()->associate($user);
-        $ingredient->calories()->associate($calories);
         $ingredient->save();
 
 
-
-//        $calories->ingredient()->save($ingredient);
-        return response()->json([$ingredient, 'user' => $request->user()->id]);
+        return response()->json($ingredient);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -83,7 +74,7 @@ class IngredientController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -94,8 +85,8 @@ class IngredientController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \Illuminate\Http\Request $request
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -106,11 +97,21 @@ class IngredientController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-        //
+        try {
+            Log::info('destroy ingredient', ['Id' => $id]);
+            $ingredient = Ingredient::find($id);
+            $ingredient->delete();
+//            Ingredient::destroy($id);
+            return response()->json(['ok' => 'ok']);
+        } catch (\Exception $exception) {
+            Log::error('[INGREDIENT DESTROY]', [$exception]);
+            return response()->json(['message' => $exception->getMessage()], 500);
+        }
+
     }
 }
