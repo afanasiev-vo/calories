@@ -19,6 +19,7 @@ import Notifications from 'vue-notification'
 
 Vue.component('example-component', require('./components/ExampleComponent.vue'));
 Vue.component('dashboard', require('./components/dashboard/index'));
+Vue.component('receipts-list', require('./components/receiptsList/index'));
 
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key)))

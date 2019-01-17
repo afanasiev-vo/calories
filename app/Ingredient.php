@@ -8,7 +8,7 @@ class Ingredient extends Model
 {
     const ACTIVE = 'ACTIVE';
     const HOLD = 'HOLD';
-    const PER_PAGE = 15;
+    const PER_PAGE = 2;
 
     protected $fillable = ['id'];
 

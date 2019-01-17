@@ -38,6 +38,9 @@ class IngredientTest extends TestCase
             ->assertJson([
                 'current_page' => 1,
             ]);
+        $this->markTestIncomplete(
+            'Этот тест ещё не реализован.'
+        );
     }
 
     /**

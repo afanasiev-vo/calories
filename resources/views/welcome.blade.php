@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
-        <title>Laravel</title>
+        <title>Calories</title>
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet" type="text/css">
@@ -81,8 +81,9 @@
 
             <div id="app" class="content">
                 <div class="title m-b-md">
-                    Laravel
+                    Calories
                 </div>
+                <p>don't let food rule you</p>
 
                 <example-component></example-component>
             </div>

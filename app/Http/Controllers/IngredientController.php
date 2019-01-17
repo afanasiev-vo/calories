@@ -25,7 +25,9 @@ class IngredientController extends Controller
         Log::debug('Ingredient@index');
         // $ingredients = Ingredient::with('products')->paginate(Ingredient::PER_PAGE);
         $system = User::where('name', 'SYSTEM')->first();
-        $ingredients = Ingredient::whereIn('owner_id', [$system->id, $request->user()->id])->paginate(Ingredient::PER_PAGE);
+        $ingredients = Ingredient::whereIn('owner_id', [$system->id, $request->user()->id])
+            ->orderBy('name', 'asc')
+            ->paginate(Ingredient::PER_PAGE);
         return response()->json($ingredients);
     }
 
@@ -100,6 +102,16 @@ class IngredientController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            Log::info('destroy ingredient', ['Id' => $id]);
+            $ingredient = Ingredient::find($id);
+            $ingredient->delete();
+//            Ingredient::destroy($id);
+            return response()->json(['ok' => 'ok']);
+        } catch (\Exception $exception) {
+            Log::error('[INGREDIENT DESTROY]', [$exception]);
+            return response()->json(['message' => $exception->getMessage()], 500);
+        }
+
     }
 }
